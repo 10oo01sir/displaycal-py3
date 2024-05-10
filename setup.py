@@ -19,7 +19,6 @@ from time import gmtime, strftime
 if sys.platform == "win32":
     import msilib
 
-
 pypath = Path(__file__).resolve()
 pydir = pypath.parent
 
@@ -270,7 +269,7 @@ def replace_placeholders(
             "%a, %d %b %Y %H:%M:%S ",
             gmtime(lastmod_time or os.stat(tmpl_path).st_mtime),
         )
-        + "+0000",
+                       + "+0000",
         "DOMAIN": DOMAIN.lower(),
         "REVERSEDOMAIN": ".".join(reversed(DOMAIN.split("."))),
         "ISODATE": strftime(
@@ -279,7 +278,7 @@ def replace_placeholders(
         "ISODATETIME": strftime(
             "%Y-%m-%dT%H:%M:%S", gmtime(lastmod_time or os.stat(tmpl_path).st_mtime)
         )
-        + "+0000",
+                       + "+0000",
         "ISOTIME": strftime(
             "%H:%M", gmtime(lastmod_time or os.stat(tmpl_path).st_mtime)
         ),
@@ -346,7 +345,7 @@ def setup():
 
     if "bdist_standalone" in sys.argv[1:]:
         i = sys.argv.index("bdist_standalone")
-        sys.argv = sys.argv[:i] + sys.argv[i + 1 :]
+        sys.argv = sys.argv[:i] + sys.argv[i + 1:]
 
         if bdist_cmd not in sys.argv[1:i]:
             sys.argv.insert(i, bdist_cmd)
@@ -392,7 +391,7 @@ def setup():
                 else:
                     stability = arg[1]
 
-                sys.argv = sys.argv[:n] + sys.argv[n + 1 :]
+                sys.argv = sys.argv[:n] + sys.argv[n + 1:]
         elif arg[0] == "-h" or arg[0].startswith("--help"):
             help = True
 
@@ -630,7 +629,7 @@ def setup():
 
                     replace_placeholders(
                         Path(pydir, "misc", f"{tmpl_name}.template.html"),
-                        Path(pydir,  f"{tmpl_name}.html"),
+                        Path(pydir, f"{tmpl_name}.html"),
                         lastmod_time,
                         {"STABILITY": "Beta" if stability != "stable" else ""},
                     )
@@ -722,11 +721,11 @@ def setup():
             bdist_args += ["--force-arch=" + arch]
 
         i = sys.argv.index("bdist_deb")
-        sys.argv = sys.argv[:i] + bdist_args + sys.argv[i + 1 :]
+        sys.argv = sys.argv[:i] + bdist_args + sys.argv[i + 1:]
 
     if bdist_pyi:
         i = sys.argv.index("bdist_pyi")
-        sys.argv = sys.argv[:i] + sys.argv[i + 1 :]
+        sys.argv = sys.argv[:i] + sys.argv[i + 1:]
 
         if "build_ext" not in sys.argv[1:i]:
             sys.argv.insert(i, "build_ext")
