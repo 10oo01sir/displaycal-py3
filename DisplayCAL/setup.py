@@ -1710,7 +1710,7 @@ setup(ext_modules=[Extension("{name}.lib{bits}.RealDisplaySizeMM", sources={sour
 
 
 def setup_do_py2exe():
-    import py2exe
+    # import py2exe
 
     # ModuleFinder can't handle runtime changes to __path__, but win32com
     # uses them
@@ -1729,7 +1729,11 @@ def setup_do_py2exe():
     except ImportError:
         # no build path setup, no worries.
         pass
-    origIsSystemDLL = py2exe.build_exe.isSystemDLL
+
+    from distutils.core import setup
+    import py2exe
+    # origIsSystemDLL = py2exe.build_exe.isSystemDLL
+
     systemroot = os.getenv("SystemRoot").lower()
 
     def isSystemDLL(pathname):
@@ -1741,7 +1745,7 @@ def setup_do_py2exe():
             return 0
         return pathname.lower().startswith(systemroot + "\\")
 
-    py2exe.build_exe.isSystemDLL = isSystemDLL
+    # py2exe.build_exe.isSystemDLL = isSystemDLL
 
     # Numpy DLL paths fix
     def numpy_dll_paths_fix():

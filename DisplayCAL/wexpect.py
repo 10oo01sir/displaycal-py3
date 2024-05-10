@@ -77,6 +77,7 @@ import traceback
 import signal
 import subprocess
 
+
 if sys.platform != "win32":
     import pty
     import tty
@@ -96,7 +97,7 @@ else:
     import win32api
     import win32file
     import winerror
-
+	from win32security import *
 
 __version__ = "2.3"
 __revision__ = "$Revision: 399 $"
@@ -111,7 +112,6 @@ __all__ = [
     "__version__",
     "__revision__",
 ]
-
 
 from DisplayCAL.meta import name as appname
 
@@ -1842,7 +1842,7 @@ class spawn_windows(spawn_unix):
             codepage=self.codepage,
             columns=self.columns,
             rows=self.rows,
-            cwd=self.cwd,
+            cwd=self.cwd.decode("utf-8"),
         )
 
         self.child_fd = self.wtty.spawn(self.command, self.args, self.env)
@@ -2171,9 +2171,24 @@ class Wtty:
         )
 
         log(commandLine)
-        self.__oproc, _, self.conpid, self.__otid = CreateProcess(
-            None, commandLine, None, None, False, CREATE_NEW_CONSOLE, env, self.cwd, si
-        )
+        # 管理员身份运行 https://blog.csdn.net/u014197534/article/details/106203810
+        # https://cloud.tencent.com/developer/article/1121764
+        try:
+            # handle = win32api.OpenProcess(win32con.PROCESS_QUERY_INFORMATION | win32con.PROCESS_VM_READ, False, one_pid)
+            # token = win32security.OpenProcessToken(handle, win32security.TOKEN_ALL_ACCESS)
+            # win32process.CreateProcessAsUser(token, commandLine, None, None, None, True,
+            #                                  win32con.NORMAL_PRIORITY_CLASS, None,
+            #                                  None, win32process.STARTUPINFO())
+            handle = win32api.OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, False, pid)
+            token = win32security.OpenProcessToken(handle, win32security.TOKEN_ALL_ACCESS)
+            self.__oproc, _, self.conpid, self.__otid = \
+                CreateProcessAsUser(token, commandLine, None, None, None, False, CREATE_NEW_CONSOLE, env, self.cwd, si)
+        except:
+            print("start process failed. file path:{0} ".format(commandLine))
+
+        # self.__oproc, _, self.conpid, self.__otid = CreateProcess(
+        #     None, commandLine, None, None, False, CREATE_NEW_CONSOLE, env, self.cwd, si
+        # )
 
     def switchTo(self, attached=True):
         """Releases from the current console and attatches
@@ -2832,7 +2847,6 @@ class searcher_string(object):
 
 
 class searcher_re(object):
-
     """This is regular expression string search helper for the
     spawn.expect_any() method.
 

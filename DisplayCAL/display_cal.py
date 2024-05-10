@@ -749,11 +749,12 @@ def donation_message(parent=None):
     dlg.buttonpanel.Layout()
     dlg.sizer0.SetSizeHints(dlg)
     dlg.sizer0.Layout()
-    if dlg.ShowModal() == wx.ID_OK:
-        launch_file(f"https://{DOMAIN}/#donate")
-        show_again = False
-    else:
-        show_again = not chkbox.Value
+    show_again = False
+    # if dlg.ShowModal() == wx.ID_OK:
+    #     launch_file(f"https://{DOMAIN}/#donate")
+    #     show_again = False
+    # else:
+    #     show_again = not chkbox.Value
     setcfg("show_donation_message", int(show_again))
     dlg.Destroy()
 
