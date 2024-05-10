@@ -88,16 +88,18 @@ else:
     from io import StringIO
     from ctypes import windll
     import pywintypes
-    from win32com.shell.shellcon import CSIDL_APPDATA
-    from win32com.shell.shell import SHGetSpecialFolderPath
+    # from win32com.shell.shellcon import CSIDL_APPDATA
+    # from win32com.shell.shell import SHGetSpecialFolderPath
+    from win32comext.shell.shellcon import CSIDL_APPDATA
+    from win32comext.shell.shell import SHGetSpecialFolderPath
     from win32console import *
     from win32process import *
+    from win32security import *
     from win32con import *
     from win32gui import *
     import win32api
     import win32file
     import winerror
-	from win32security import *
 
 __version__ = "2.3"
 __revision__ = "$Revision: 399 $"
@@ -2171,24 +2173,24 @@ class Wtty:
         )
 
         log(commandLine)
-        # 管理员身份运行 https://blog.csdn.net/u014197534/article/details/106203810
-        # https://cloud.tencent.com/developer/article/1121764
-        try:
-            # handle = win32api.OpenProcess(win32con.PROCESS_QUERY_INFORMATION | win32con.PROCESS_VM_READ, False, one_pid)
-            # token = win32security.OpenProcessToken(handle, win32security.TOKEN_ALL_ACCESS)
-            # win32process.CreateProcessAsUser(token, commandLine, None, None, None, True,
-            #                                  win32con.NORMAL_PRIORITY_CLASS, None,
-            #                                  None, win32process.STARTUPINFO())
-            handle = win32api.OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, False, pid)
-            token = win32security.OpenProcessToken(handle, win32security.TOKEN_ALL_ACCESS)
-            self.__oproc, _, self.conpid, self.__otid = \
-                CreateProcessAsUser(token, commandLine, None, None, None, False, CREATE_NEW_CONSOLE, env, self.cwd, si)
-        except:
-            print("start process failed. file path:{0} ".format(commandLine))
+        # # 管理员身份运行 https://blog.csdn.net/u014197534/article/details/106203810
+        # # https://cloud.tencent.com/developer/article/1121764
+        # try:
+        #     # handle = win32api.OpenProcess(win32con.PROCESS_QUERY_INFORMATION | win32con.PROCESS_VM_READ, False, one_pid)
+        #     # token = win32security.OpenProcessToken(handle, win32security.TOKEN_ALL_ACCESS)
+        #     # win32process.CreateProcessAsUser(token, commandLine, None, None, None, True,
+        #     #                                  win32con.NORMAL_PRIORITY_CLASS, None,
+        #     #                                  None, win32process.STARTUPINFO())
+        #     handle = win32api.OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, False, pid)
+        #     token = OpenProcessToken(handle, TOKEN_ALL_ACCESS)
+        #     self.__oproc, _, self.conpid, self.__otid = \
+        #         CreateProcessAsUser(token, commandLine, None, None, None, False, CREATE_NEW_CONSOLE, env, self.cwd, si)
+        # except:
+        #     print("start process failed. file path:{0} ".format(commandLine))
 
-        # self.__oproc, _, self.conpid, self.__otid = CreateProcess(
-        #     None, commandLine, None, None, False, CREATE_NEW_CONSOLE, env, self.cwd, si
-        # )
+        self.__oproc, _, self.conpid, self.__otid = CreateProcess(
+            None, commandLine, None, None, False, CREATE_NEW_CONSOLE, env, self.cwd, si
+        )
 
     def switchTo(self, attached=True):
         """Releases from the current console and attatches
@@ -2707,7 +2709,7 @@ class ConsoleReader(object):
             log(e, "consolereader_exceptions", logdir)
 
     def handler(self, sig):
-        log(sig, "consolereader", logdir)
+        log(sig, "consolereader", self.logdir)
         return False
 
     def getConsoleOut(self):

@@ -85,7 +85,7 @@ def bootstrap():
 def main():
     from DisplayCAL.main import main as display_main
     display_main()
-    print(input('Echo: '))
+    # print(input('Echo: '))
 
 
 if __name__ == '__main__':

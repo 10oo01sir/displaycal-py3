@@ -44,7 +44,7 @@ xcopy LICENSE.txt temp\ /y
 xcopy *.icns temp\ /y
 xcopy CHANGES.html temp\ /y
 
-pyinstaller -Fw --clean --noconfirm --uac-admin -i DisplayCAL\theme\icons\DisplayCAL.ico run_as_admin_win.py --add-data ./temp:DisplayCAL -n DisplayCAL
+@REM pyinstaller -Fw --clean --noconfirm --uac-admin -i DisplayCAL\theme\icons\DisplayCAL.ico run_as_admin_win.py --add-data ./temp:DisplayCAL -n DisplayCAL
 pyinstaller -D --clean --noconfirm --uac-admin -i DisplayCAL\theme\icons\DisplayCAL.ico run_as_admin_win.py --add-data ./temp:DisplayCAL -n DisplayCAL
 
 rd /S /Q temp\
