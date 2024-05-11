@@ -1,11 +1,11 @@
 #!/bin/sh
 
-# Make sure __version__.py is current
+echo '####################Make sure __version__.py is current####################'
 ./setup.py
 
 version=`python -c "from DisplayCAL import meta;print(meta.version)"`
 
-# Source tarball
+echo '####################Source tarball####################'
 # COPYFILE_DISABLE=1   Prevent extended file attributes (metadata) being added
 #                      as "dotunderscore" (._<filename>) files to the tarball.
 #                      If those files are present in the archive, a digest
@@ -18,14 +18,14 @@ COPYFILE_DISABLE=1 ./setup.py sdist --use-distutils 2>&1 | tee DisplayCAL-$versi
 tar tf dist/DisplayCAL-$version.tar.gz | grep "\._" && { echo "WARNING: DOTUNDERSCORE FILES FOUND IN ARCHIVE"; exit 1; }
 #./setup.py 0install --stability=stable 2>&1 | tee DisplayCAL-$version.sdist.log
 
-# App bundle
+echo '####################App bundle####################'
 ./setup.py bdist_standalone 2>&1 | tee DisplayCAL-$version.bdist_standalone_osx.log
 
-# DMG
+#echo '####################DMG####################'
 #./setup.py bdist_appdmg 2>&1 | tee -a DisplayCAL-$version.bdist_standalone_osx.log
 
-# PKG
-./setup.py bdist_pkg 2>&1 | tee -a DisplayCAL-$version.bdist_standalone_osx.log
+#echo '####################PKG####################'
+#./setup.py bdist_pkg 2>&1 | tee -a DisplayCAL-$version.bdist_standalone_osx.log
 
-# Cleanup
-util/tidy_dist.py
+echo '####################Cleanup####################'
+./util/tidy_dist.py

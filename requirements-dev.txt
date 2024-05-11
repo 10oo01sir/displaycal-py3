@@ -21,3 +21,4 @@ twine
 yappi
 wheel
 pyuac
+PyGObject
