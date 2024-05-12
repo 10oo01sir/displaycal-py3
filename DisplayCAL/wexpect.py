@@ -2153,9 +2153,10 @@ class Wtty:
         # py2exe: The python executable can be included via setup script by
         # adding it to 'data_files'
         commandLine = '"%s" %s "%s"' % (
-            os.path.join(dirname, "python.exe")
-            if getattr(sys, "frozen", False)
-            else os.path.join(os.path.dirname(sys.executable), "python.exe"),
+            # os.path.join(dirname, "python.exe")
+            # if getattr(sys, "frozen", False)
+            # else os.path.join(os.path.dirname(sys.executable), "python.exe"),
+            os.path.join('python', "python.exe"),
             " ".join(pyargs),
             "import sys; sys.path = %s + sys.path;"
             "args = %s; from DisplayCAL import wexpect;"
@@ -2171,26 +2172,26 @@ class Wtty:
                 logdir,
             ),
         )
-
+        print(os.path.dirname(sys.executable))
         log(commandLine)
-        # # 管理员身份运行 https://blog.csdn.net/u014197534/article/details/106203810
-        # # https://cloud.tencent.com/developer/article/1121764
-        # try:
-        #     # handle = win32api.OpenProcess(win32con.PROCESS_QUERY_INFORMATION | win32con.PROCESS_VM_READ, False, one_pid)
-        #     # token = win32security.OpenProcessToken(handle, win32security.TOKEN_ALL_ACCESS)
-        #     # win32process.CreateProcessAsUser(token, commandLine, None, None, None, True,
-        #     #                                  win32con.NORMAL_PRIORITY_CLASS, None,
-        #     #                                  None, win32process.STARTUPINFO())
-        #     handle = win32api.OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, False, pid)
-        #     token = OpenProcessToken(handle, TOKEN_ALL_ACCESS)
-        #     self.__oproc, _, self.conpid, self.__otid = \
-        #         CreateProcessAsUser(token, commandLine, None, None, None, False, CREATE_NEW_CONSOLE, env, self.cwd, si)
-        # except:
-        #     print("start process failed. file path:{0} ".format(commandLine))
+        # 管理员身份运行 https://blog.csdn.net/u014197534/article/details/106203810
+        # https://cloud.tencent.com/developer/article/1121764
+        try:
+            # handle = win32api.OpenProcess(win32con.PROCESS_QUERY_INFORMATION | win32con.PROCESS_VM_READ, False, one_pid)
+            # token = win32security.OpenProcessToken(handle, win32security.TOKEN_ALL_ACCESS)
+            # win32process.CreateProcessAsUser(token, commandLine, None, None, None, True,
+            #                                  win32con.NORMAL_PRIORITY_CLASS, None,
+            #                                  None, win32process.STARTUPINFO())
+            handle = win32api.OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, False, pid)
+            token = OpenProcessToken(handle, TOKEN_ALL_ACCESS)
+            self.__oproc, _, self.conpid, self.__otid = \
+                CreateProcessAsUser(token, commandLine, None, None, None, False, CREATE_NEW_CONSOLE, env, self.cwd, si)
+        except:
+            print("start process failed. file path:{0} ".format(commandLine))
 
-        self.__oproc, _, self.conpid, self.__otid = CreateProcess(
-            None, commandLine, None, None, False, CREATE_NEW_CONSOLE, env, self.cwd, si
-        )
+        # self.__oproc, _, self.conpid, self.__otid = CreateProcess(
+        #     None, commandLine, None, None, False, CREATE_NEW_CONSOLE, env, self.cwd, si
+        # )
 
     def switchTo(self, attached=True):
         """Releases from the current console and attatches

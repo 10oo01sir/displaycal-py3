@@ -3,7 +3,7 @@
 REM Make sure __version__.py is current
 python setup.py
 
-for /F usebackq %%a in (`python -c "import sys;print(sys.version[:3])"`) do (
+for /F usebackq %%a in (`python -c "import sys;print(sys.version[:4])"`) do (
     set python_version=%%a
 )
 
@@ -22,7 +22,7 @@ if not exist dist\DisplayCAL-%version%.tar.gz if not exist dist\%version%\Displa
 
 REM Create openSUSE build service control files and update 0install feeds
 REM python setup.py buildservice 0install --stability=stable
-python setup.py buildservice --stability=stable
+REM python setup.py buildservice --stability=stable
 
 REM Standalone executable
 if not exist dist\py2exe.win32-py%python_version%\DisplayCAL-%version% (
@@ -47,12 +47,18 @@ if not exist dist\DisplayCAL-%version%-win32.zip if not exist dist\%version%\Dis
 
 if "%~1"=="bdist_msi" (
     REM Python 2.6 MSI
-    if not exist dist\DisplayCAL-%msi_version%.win32-py2.6.msi if not exist dist\%version%\DisplayCAL-%msi_version%.win32-py2.6.msi (
-        C:\Python26\python.exe setup.py bdist_msi --use-distutils 2>&1 | tee DisplayCAL-%msi_version%.msi-py2.6.log
-        C:\Python26\python.exe setup.py finalize_msi 2>&1 | tee -a DisplayCAL-%msi_version%.msi-py2.6.log
-    )
+    REM if not exist dist\DisplayCAL-%msi_version%.win32-py2.6.msi if not exist dist\%version%\DisplayCAL-%msi_version%.win32-py2.6.msi (
+    REM     C:\Python26\python.exe setup.py bdist_msi --use-distutils 2>&1 | tee DisplayCAL-%msi_version%.msi-py2.6.log
+    REM     C:\Python26\python.exe setup.py finalize_msi 2>&1 | tee -a DisplayCAL-%msi_version%.msi-py2.6.log
+    REM )
 
     REM Python 2.7 MSI
+    REM if not exist dist\DisplayCAL-%msi_version%.win32-py2.7.msi if not exist dist\%version%\DisplayCAL-%msi_version%.win32-py2.7.msi (
+    REM     C:\Users\DBA\.conda\envs\Conda311\python.exe setup.py bdist_msi --use-distutils 2>&1 | tee DisplayCAL-%msi_version%.msi-py2.7.log
+    REM     C:\Users\DBA\.conda\envs\Conda311\python.exe setup.py finalize_msi 2>&1 | tee -a DisplayCAL-%msi_version%.msi-py2.7.log
+    REM )
+
+    REM Python 3.11 MSI
     if not exist dist\DisplayCAL-%msi_version%.win32-py2.7.msi if not exist dist\%version%\DisplayCAL-%msi_version%.win32-py2.7.msi (
         C:\Users\DBA\.conda\envs\Conda311\python.exe setup.py bdist_msi --use-distutils 2>&1 | tee DisplayCAL-%msi_version%.msi-py2.7.log
         C:\Users\DBA\.conda\envs\Conda311\python.exe setup.py finalize_msi 2>&1 | tee -a DisplayCAL-%msi_version%.msi-py2.7.log

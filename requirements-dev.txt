@@ -10,7 +10,7 @@ flake8-pep3101
 flake8-spellcheck
 matplotlib
 ppdir
-py2app
+py2app; sys_platform=='darwin'
 pyglet
 pytest
 pytest-cov
@@ -20,5 +20,8 @@ snowballstemmer
 twine
 yappi
 wheel
-pyuac
 PyGObject
+sip
+py2exe; sys_platform=='win32'
+comtypes; sys_platform=='win32'
+wmi; sys_platform=='win32'

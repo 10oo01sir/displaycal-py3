@@ -1,9 +1,9 @@
-@echo off
+REM @echo off
 
-REM Make sure __version__.py is current
+echo REM Make sure __version__.py is current
 python setup.py
 
-for /F usebackq %%a in (`python -c "import sys;print(sys.version[:3])"`) do (
+for /F usebackq %%a in (`python -c "import sys;print(sys.version[:4])"`) do (
     set python_version=%%a
 )
 
@@ -11,20 +11,21 @@ for /F usebackq %%a in (`python -c "from DisplayCAL import meta;print(meta.versi
     set version=%%a
 )
 
-for /F usebackq %%a in (`python -c "from meta import version_tuple;print('.'.join(str(n) for n in version_tuple[:2] + (str(version_tuple[2]) + str(version_tuple[3]), )))"`) do (
-    set msi_version=%%a
-)
+REM for /F usebackq %%a in (`python -c "from meta import version_tuple;print('.'.join(str(n) for n in version_tuple[:2] + (str(version_tuple[2]) + str(version_tuple[3]), )))"`) do (
+REM     set msi_version=%%a
+REM )
 
-REM Source tarball
-if not exist dist\DisplayCAL-%version%.tar.gz if not exist dist\%version%\DisplayCAL-%version%.tar.gz (
-    python setup.py sdist --format=gztar --use-distutils 2>&1 | tee DisplayCAL-%version%.sdist.log
-)
+REM echo REM Source tarball
+REM if not exist dist\DisplayCAL-%version%.tar.gz if not exist dist\%version%\DisplayCAL-%version%.tar.gz (
+REM     python setup.py sdist --format=gztar --use-distutils 2>&1 | tee DisplayCAL-%version%.sdist.log
+REM )
 
 REM Create openSUSE build service control files and update 0install feeds
 REM python setup.py buildservice 0install --stability=stable
-python setup.py buildservice --stability=stable
+REM echo python setup.py buildservice --stability=stable
+REM python setup.py buildservice --stability=stable
 
-REM Standalone executable
+echo REM Standalone executable
 if not exist dist\py2exe.win32-py%python_version%\DisplayCAL-%version% (
     python setup.py bdist_standalone inno 2>&1 | tee DisplayCAL-%version%.bdist_standalone-py%python_version%.log
     if exist codesigning\sign.cmd (
@@ -33,38 +34,33 @@ if not exist dist\py2exe.win32-py%python_version%\DisplayCAL-%version% (
     )
 )
 
-REM Standalone executable - Setup
+echo REM Standalone executable - Setup
 if not exist dist\DisplayCAL-%version%-Setup.exe if not exist dist\%version%\DisplayCAL-%version%-Setup.exe (
     "C:\Program Files (x86)\Inno Setup 6\Compil32.exe" /cc dist/DisplayCAL-Setup-py2exe.win32-py%python_version%.iss
 )
 
 REM Standalone executable - ZIP
-if not exist dist\DisplayCAL-%version%-win32.zip if not exist dist\%version%\DisplayCAL-%version%-win32.zip (
-    pushd dist\py2exe.win32-py%python_version%
-    zip -9 -r ..\DisplayCAL-%version%-win32.zip DisplayCAL-%version%
-    popd
-)
+REM if not exist dist\DisplayCAL-%version%-win32.zip if not exist dist\%version%\DisplayCAL-%version%-win32.zip (
+REM     pushd dist\py2exe.win32-py%python_version%
+REM     zip -9 -r ..\DisplayCAL-%version%-win32.zip DisplayCAL-%version%
+REM     popd
+REM )
 
-if "%~1"=="bdist_msi" (
-    REM Python 2.6 MSI
-    REM if not exist dist\DisplayCAL-%msi_version%.win32-py2.6.msi if not exist dist\%version%\DisplayCAL-%msi_version%.win32-py2.6.msi (
-    REM     C:\Python26\python.exe setup.py bdist_msi --use-distutils 2>&1 | tee DisplayCAL-%msi_version%.msi-py2.6.log
-    REM     C:\Python26\python.exe setup.py finalize_msi 2>&1 | tee -a DisplayCAL-%msi_version%.msi-py2.6.log
-    REM )
+REM if "%~1"=="bdist_msi" (
+REM     REM Python 2.6 MSI
+REM     if not exist dist\DisplayCAL-%msi_version%.win32-py2.6.msi if not exist dist\%version%\DisplayCAL-%msi_version%.win32-py2.6.msi (
+REM         C:\Python26\python.exe setup.py bdist_msi --use-distutils 2>&1 | tee DisplayCAL-%msi_version%.msi-py2.6.log
+REM         C:\Python26\python.exe setup.py finalize_msi 2>&1 | tee -a DisplayCAL-%msi_version%.msi-py2.6.log
+REM     )
+REM
+REM     REM Python 2.7 MSI
+REM     if not exist dist\DisplayCAL-%msi_version%.win32-py2.7.msi if not exist dist\%version%\DisplayCAL-%msi_version%.win32-py2.7.msi (
+REM         C:\Users\DBA\.conda\envs\Conda311\python.exe setup.py bdist_msi --use-distutils 2>&1 | tee DisplayCAL-%msi_version%.msi-py2.7.log
+REM         C:\Users\DBA\.conda\envs\Conda311\python.exe setup.py finalize_msi 2>&1 | tee -a DisplayCAL-%msi_version%.msi-py2.7.log
+REM     )
+REM )
 
-    REM Python 2.7 MSI
-    REM if not exist dist\DisplayCAL-%msi_version%.win32-py2.7.msi if not exist dist\%version%\DisplayCAL-%msi_version%.win32-py2.7.msi (
-    REM     C:\Users\DBA\.conda\envs\Conda311\python.exe setup.py bdist_msi --use-distutils 2>&1 | tee DisplayCAL-%msi_version%.msi-py2.7.log
-    REM     C:\Users\DBA\.conda\envs\Conda311\python.exe setup.py finalize_msi 2>&1 | tee -a DisplayCAL-%msi_version%.msi-py2.7.log
-    REM )
-
-    REM Python 3.11 MSI
-    if not exist dist\DisplayCAL-%msi_version%.win32-py2.7.msi if not exist dist\%version%\DisplayCAL-%msi_version%.win32-py2.7.msi (
-        C:\Users\DBA\.conda\envs\Conda311\python.exe setup.py bdist_msi --use-distutils 2>&1 | tee DisplayCAL-%msi_version%.msi-py2.7.log
-        C:\Users\DBA\.conda\envs\Conda311\python.exe setup.py finalize_msi 2>&1 | tee -a DisplayCAL-%msi_version%.msi-py2.7.log
-    )
-)
-
+echo REM Python 3.11 Installer
 if "%~1"=="bdist_wininst" (
     REM Python 2.6 Installer
     REM if not exist dist\DisplayCAL-%version%.win32-py2.6.exe if not exist dist\%version%\DisplayCAL-%version%.win32-py2.6.exe (

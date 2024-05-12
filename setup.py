@@ -24,6 +24,8 @@ pydir = pypath.parent
 
 sys.path.insert(0, "DisplayCAL")
 sys.path.insert(1, str(pydir))
+# 打包RecursionError: maximum recursion depth exceeded in comparison
+sys.setrecursionlimit(1000000)
 
 
 def create_appdmg(zeroinstall=False):
@@ -661,7 +663,7 @@ def setup():
         from DisplayCAL import localization as lang
 
         scripts = get_scripts()
-        provides = [f"<python2>{name}</python2>"]
+        provides = [f"<python3>{name}</python3>"]
 
         for script, desc in scripts:
             provides.append(f"<binary>{script}</binary>")

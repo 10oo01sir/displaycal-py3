@@ -36,6 +36,9 @@ import shutil
 import subprocess as sp
 import sys
 from time import strftime
+from py2exe import freeze
+# 打包RecursionError: maximum recursion depth exceeded in comparison
+sys.setrecursionlimit(1000000)
 
 
 # # Borrowed from setuptools
@@ -199,7 +202,7 @@ def add_lib_excludes(key, excludebits):
         config["excludes"][key].extend([f"{name}.lib{exclude}", f"lib{exclude}"])
 
     for exclude in ("32", "64"):
-        for pycompat in ("38", "39", "310", "311"):
+        for pycompat in ("38", "39", "310", "311", "312"):
             if key == "win32" and (
                 pycompat == str(sys.version_info[0]) + str(sys.version_info[1])
                 or exclude == excludebits[0]
@@ -1014,6 +1017,8 @@ setup(ext_modules=[Extension("{name}.lib{bits}.RealDisplaySizeMM", sources={sour
             "Programming Language :: Python :: 3.8",
             "Programming Language :: Python :: 3.9",
             "Programming Language :: Python :: 3.10",
+            "Programming Language :: Python :: 3.11",
+            "Programming Language :: Python :: 3.12",
             "Topic :: Multimedia :: Graphics",
         ],
         "data_files": data_files,
@@ -1146,6 +1151,7 @@ setup(ext_modules=[Extension("{name}.lib{bits}.RealDisplaySizeMM", sources={sour
             appname.lower() + "-apply-profiles-launcher",
             appname + " Profile Loader Launcher",
         )
+        copyright = "© %s %s" % (strftime("%Y"), author)
         for script, desc in scripts + [apply_profiles_launcher]:
             shutil.copy(
                 os.path.join(source_dir, "scripts", script),
@@ -1167,7 +1173,7 @@ setup(ext_modules=[Extension("{name}.lib{bits}.RealDisplaySizeMM", sources={sour
                         )
                     ],
                     "other_resources": [(24, 1, manifest_xml)],
-                    "copyright": "© %s %s" % (strftime("%Y"), author),
+                    "copyright": copyright,
                     "description": desc,
                 }
             )
@@ -1198,7 +1204,7 @@ setup(ext_modules=[Extension("{name}.lib{bits}.RealDisplaySizeMM", sources={sour
                         )
                     ],
                     "other_resources": [(24, 1, manifest_xml)],
-                    "copyright": "© %s %s" % (strftime("%Y"), author),
+                    "copyright": copyright,
                     "description": apply_profiles_launcher[1],
                 }
             )
@@ -1235,7 +1241,7 @@ setup(ext_modules=[Extension("{name}.lib{bits}.RealDisplaySizeMM", sources={sour
                         )
                     ],
                     "other_resources": [(24, 1, manifest_xml)],
-                    "copyright": "© %s %s" % (strftime("%Y"), author),
+                    "copyright": copyright,
                     "description": desc,
                 }
             )
@@ -1262,7 +1268,7 @@ setup(ext_modules=[Extension("{name}.lib{bits}.RealDisplaySizeMM", sources={sour
                         )
                     ],
                     "other_resources": [(24, 1, manifest_xml)],
-                    "copyright": "© %s %s" % (strftime("%Y"), author),
+                    "copyright": copyright,
                     "description": "Convert eeColor 65^3 to madVR 256^3 3D LUT "
                     "(video levels in, video levels out)",
                 }
@@ -1646,7 +1652,60 @@ setup(ext_modules=[Extension("{name}.lib{bits}.RealDisplaySizeMM", sources={sour
             if "build_ext" not in sys.argv[1:i]:
                 sys.argv.insert(i, "build_ext")
 
-        setup(**attrs)
+        if sys.platform == "win32" or do_py2exe:
+            console = []
+            # console = attrs['console']
+            for i in range(len(attrs['console'])):
+                temp_d = dict()
+                temp_d['script'] = attrs['console'][i].script
+                temp_d['icon_resources'] = attrs['console'][i].icon_resources
+                temp_d['other_resources'] = attrs['console'][i].other_resources
+                version_info = {'version': attrs['version'], 'description': attrs['console'][i].description,
+                                'comments': attrs['console'][i].description,
+                                'company_name': attrs['author'], 'copyright': attrs['console'][i].copyright,
+                                'trademark': attrs['console'][i].description,
+                                'product_name': attrs['console'][i].description, 'product_version': attrs['version'],
+                                'internal_name': attrs['console'][i].description,
+                                'private_build': attrs['version'], 'special_build': attrs['version']}
+                temp_d['version_info'] = version_info
+                console.append(temp_d)
+
+            windows = []
+            # windows = attrs['windows']
+            for i in range(len(attrs['windows'])):
+                temp_d = dict()
+                temp_d['script'] = attrs['windows'][i].script
+                temp_d['icon_resources'] = attrs['windows'][i].icon_resources
+                temp_d['other_resources'] = attrs['windows'][i].other_resources
+                version_info = {'version': attrs['version'], 'description': attrs['windows'][i].description,
+                                'comments': attrs['windows'][i].description,
+                                'company_name': attrs['author'], 'copyright': attrs['windows'][i].copyright,
+                                'trademark': attrs['windows'][i].description,
+                                'product_name': attrs['windows'][i].description,
+                                'product_version': attrs['version'],
+                                'internal_name': attrs['windows'][i].description,
+                                'private_build': attrs['version'], 'special_build': attrs['version']}
+                temp_d['version_info'] = version_info
+                windows.append(temp_d)
+
+            data_files = attrs['data_files']
+            zipfile = attrs['zipfile']
+            # options = attrs['options']
+            options = dict()
+            options['excludes'] = attrs['options']['py2exe']['excludes']
+            options['packages'] = attrs['packages']
+            options['dll_excludes'] = attrs['options']['py2exe']['dll_excludes']
+            options['dist_dir'] = attrs['options']['py2exe']['dist_dir']
+            options['compressed'] = 1
+            copyright = "© %s %s" % (strftime("%Y"), author)
+            version_info = {'version': attrs['version'], 'description': attrs['description'], 'comments': attrs['long_description'],
+                            'company_name': attrs['author'], 'copyright': copyright, 'trademark': attrs['name'],
+                            'product_name': attrs['name'], 'product_version': attrs['version'], 'internal_name': attrs['name'],
+                            'private_build': attrs['version'], 'special_build': attrs['version']}
+
+            freeze(console, windows, data_files, zipfile, options, version_info)
+        else:
+            setup(**attrs)
 
         if dry_run or help:
             return
