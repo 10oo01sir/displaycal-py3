@@ -36,7 +36,8 @@ import shutil
 import subprocess as sp
 import sys
 from time import strftime
-from py2exe import freeze
+if sys.platform == "win32":
+    from py2exe import freeze
 # 打包RecursionError: maximum recursion depth exceeded in comparison
 sys.setrecursionlimit(1000000)
 
@@ -150,6 +151,20 @@ config = {
             "tcl",
             "test",
             "yaml",
+            "wx",
+            "PySide6",
+            "PySide2"
+            "IPython",
+            "jedi",
+            "parso",
+            "PyInstaller",
+            "Cython",
+            "certifi",
+            "pygments",
+            #"DisplayCAL",
+            "numpy",
+            "gi",
+            "matplotlib",
         ],
         "darwin": ["gdbm"],
         "win32": ["gi", "win32com.client.genpy"],

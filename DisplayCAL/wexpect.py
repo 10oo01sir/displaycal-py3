@@ -2153,10 +2153,10 @@ class Wtty:
         # py2exe: The python executable can be included via setup script by
         # adding it to 'data_files'
         commandLine = '"%s" %s "%s"' % (
-            # os.path.join(dirname, "python.exe")
-            # if getattr(sys, "frozen", False)
-            # else os.path.join(os.path.dirname(sys.executable), "python.exe"),
-            os.path.join('python', "python.exe"),
+            os.path.join(dirname, "python.exe")
+            if getattr(sys, "frozen", False)
+            else os.path.join(os.path.dirname(sys.executable), "python.exe"),
+            # os.path.join('python', "python.exe"),
             " ".join(pyargs),
             "import sys; sys.path = %s + sys.path;"
             "args = %s; from DisplayCAL import wexpect;"

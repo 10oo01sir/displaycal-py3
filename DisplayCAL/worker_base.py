@@ -429,7 +429,7 @@ def printcmdline(cmd, args=None, fn=None, cwd=None):
         fn(
             textwrap.fill(
                 line,
-                80,
+                120,
                 expand_tabs=False,
                 replace_whitespace=False,
                 initial_indent="    ",

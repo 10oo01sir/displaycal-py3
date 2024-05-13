@@ -6648,7 +6648,7 @@ BEGIN_DATA
                         self.log(
                             textwrap.fill(
                                 name + os.path.sep,
-                                80,
+                                120,
                                 expand_tabs=False,
                                 replace_whitespace=False,
                                 initial_indent=indent,
