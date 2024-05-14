@@ -1,8 +1,9 @@
 #!/bin/sh
-
+export PYTHON_PATH=/usr/local/bin/
+alias python=${PYTHON_PATH}/python3.11
 echo '####################Make sure __version__.py is current####################'
-./setup.py
-
+python ./setup.py
+cp -rfp DisplayCAL/cacert.pem .
 version=`python -c "from DisplayCAL import meta;print(meta.version)"`
 
 echo '####################Source tarball####################'
@@ -19,7 +20,7 @@ tar tf dist/DisplayCAL-$version.tar.gz | grep "\._" && { echo "WARNING: DOTUNDER
 #./setup.py 0install --stability=stable 2>&1 | tee DisplayCAL-$version.sdist.log
 
 echo '####################App bundle####################'
-./setup.py bdist_standalone 2>&1 | tee DisplayCAL-$version.bdist_standalone_osx.log
+python ./setup.py bdist_standalone 2>&1 | tee DisplayCAL-$version.bdist_standalone_osx.log
 
 #echo '####################DMG####################'
 #./setup.py bdist_appdmg 2>&1 | tee -a DisplayCAL-$version.bdist_standalone_osx.log
@@ -28,4 +29,4 @@ echo '####################App bundle####################'
 #./setup.py bdist_pkg 2>&1 | tee -a DisplayCAL-$version.bdist_standalone_osx.log
 
 echo '####################Cleanup####################'
-./util/tidy_dist.py
+python ./util/tidy_dist.py
