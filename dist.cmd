@@ -1,4 +1,4 @@
-REM @echo off
+@echo off
 
 echo REM Make sure __version__.py is current
 python setup.py

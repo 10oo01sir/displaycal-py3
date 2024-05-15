@@ -10,7 +10,6 @@ if /i "%input_value%" equ "build" (
 call:buid_displaycal
 exit /b 0
 )
-
 pause
 
 :buid_displaycal
@@ -45,7 +44,7 @@ xcopy *.icns temp\ /y
 xcopy CHANGES.html temp\ /y
 
 @REM pyinstaller -Fw --clean --noconfirm --uac-admin -i DisplayCAL\theme\icons\DisplayCAL.ico run_as_admin_win.py --add-data ./temp:DisplayCAL -n DisplayCAL
-pyinstaller -D --clean --noconfirm --uac-admin -i DisplayCAL\theme\icons\DisplayCAL.ico run_as_admin_win.py --add-data ./temp:DisplayCAL --add-data ./venv/Scripts:python -n DisplayCAL
+pyinstaller -Dw --clean --noconfirm -i DisplayCAL\theme\icons\DisplayCAL.ico main.py --add-data ./temp:DisplayCAL --add-data ./venv/Scripts:venv/Scripts -n DisplayCAL
 
 rd /S /Q temp\
 

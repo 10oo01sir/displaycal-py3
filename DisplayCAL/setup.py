@@ -1703,7 +1703,8 @@ setup(ext_modules=[Extension("{name}.lib{bits}.RealDisplaySizeMM", sources={sour
                 windows.append(temp_d)
 
             data_files = attrs['data_files']
-            zipfile = attrs['zipfile']
+            #
+            zipfile = None
             # options = attrs['options']
             options = dict()
             options['excludes'] = attrs['options']['py2exe']['excludes']
@@ -1711,6 +1712,7 @@ setup(ext_modules=[Extension("{name}.lib{bits}.RealDisplaySizeMM", sources={sour
             options['dll_excludes'] = attrs['options']['py2exe']['dll_excludes']
             options['dist_dir'] = attrs['options']['py2exe']['dist_dir']
             options['compressed'] = 1
+            options['bundle_files'] = 3
             copyright = "© %s %s" % (strftime("%Y"), author)
             version_info = {'version': attrs['version'], 'description': attrs['description'], 'comments': attrs['long_description'],
                             'company_name': attrs['author'], 'copyright': copyright, 'trademark': attrs['name'],
