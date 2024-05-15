@@ -20,7 +20,7 @@ tar tf dist/DisplayCAL-$version.tar.gz | grep "\._" && { echo "WARNING: DOTUNDER
 #./setup.py 0install --stability=stable 2>&1 | tee DisplayCAL-$version.sdist.log
 
 echo '####################App bundle####################'
-python ./setup.py bdist_standalone 2>&1 | tee DisplayCAL-$version.bdist_standalone_osx.log
+python ./setup.py bdist_standalone --graph 2>&1 | tee DisplayCAL-$version.bdist_standalone_osx.log
 
 #echo '####################DMG####################'
 #./setup.py bdist_appdmg 2>&1 | tee -a DisplayCAL-$version.bdist_standalone_osx.log

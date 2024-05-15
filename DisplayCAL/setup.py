@@ -1718,8 +1718,43 @@ setup(ext_modules=[Extension("{name}.lib{bits}.RealDisplaySizeMM", sources={sour
                             'private_build': attrs['version'], 'special_build': attrs['version']}
 
             freeze(console, windows, data_files, zipfile, options, version_info)
-        else:
-            setup(**attrs)
+        elif sys.platform == "darwin" or do_py2app:
+            # setup(**attrs)
+            app_name = attrs['name']
+            app_version = attrs['version']
+            app_main = attrs['app']
+            app_data_files = attrs['data_files']
+            options = attrs['options']
+            py2app_dict = options['py2app']
+            py2app_dict['packages'] = attrs['packages']
+            py2app_dict['matplotlib_backends'] = '-'    # import matplotlib存在时，使用“*”包含所有matplotlib后端，使用“-”仅包含显式包含的后端。
+            py2app_dict['no_strip'] = True  # 不要从输出中剥离调试信息和本地符号。默认值为剥离。默认出现了剥离失败错误
+            py2app_dict['argv_emulation'] = False   # argv 仿真器在程序启动期间运行一个小事件循环，以拦截文件打开和 url 打开事件。
+            # py2app_dict['extra_scripts'] = attrs['entry_points']['gui_scripts']
+            # py2app_dict['optimize'] = 0   # 要禁用的 Pytho 解释器级别
+            # py2app_dict['includes'] = attrs['includes'] # 要包含的 Python 模块列表，即使依赖项检查器未检测到它们。此列表中的包将被忽略。
+            # py2app_dict['iconfile'] = attrs['iconfile']
+            # py2app_dict['dylib_excludes'] = attrs['dylib_excludes']
+            # py2app_dict['frameworks'] = attrs['frameworks']
+            # py2app_dict['plist'] = attrs['plist']
+            # py2app_dict['mappingmodels'] = attrs['xrc']    # 指定的 xcmappingmodel 文件将被编译并包含在捆绑资源中
+            # py2app_dict['resources'] = attrs['resources']
+            # py2app_dict['extensionn'] = attrs['extensionn']   # 使用输出的扩展名，应用程序默认为“.app”，插件默认为“.plugin”。通常仅用于插件。
+            # py2app_dict['emulate_shell_environment'] = True # 仅当应用程序需要访问终端中设置的环境变量时才使用此选项。此选项不适用于一般用途。
+            # py2app_dict['dist_dir'] = attrs['dist_dir']   #用于放置最终构建的发行版（默认为 dist）
+            # py2app_dict['include_plugins'] = attrs['include_plugins'] #插件捆绑包将复制到应用程序捆绑包中，位于插件类型的预期位置
+            # py2app_dict['arch'] = 'x86_64' # 要用于输出中主可执行文件的（一组）体系结构。这应该是 python 解释器支持的体系结构的子集。
+            # py2app_dict['semi_standalone'] = 'semi_standalone'  # 创建依赖于 Python 的现有安装的输出，但包含所有代码和依赖项。
+
+            setup(
+                name=app_name,
+                version=app_version,
+                app=app_main,
+                data_files=app_data_files,
+                options={
+                    "py2app": py2app_dict
+                },
+            )
 
         if dry_run or help:
             return
