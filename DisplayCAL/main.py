@@ -72,6 +72,8 @@ from DisplayCAL.util_os import FileLock, LockingError, UnlockingError
 if sys.platform == "win32":
     from DisplayCAL.util_win import win_ver
     import ctypes
+    # https://pyinstaller.org/en/stable/common-issues-and-pitfalls.html
+    ctypes.windll.kernel32.SetDllDirectoryW(None)
 
 
 def _excepthook(etype, value, tb):

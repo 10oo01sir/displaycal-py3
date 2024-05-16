@@ -21,7 +21,9 @@ with this program; if not, see <http://www.gnu.org/licenses/>
 
 import sys
 
-# Standard modules
+if __name__ == "__main__":
+    import multiprocessing
+    multiprocessing.freeze_support()
 
 from io import StringIO, BytesIO
 import datetime
@@ -316,10 +318,24 @@ from wx.lib import delayedresult, platebtn
 from wx.lib.art import flagart
 from wx.lib.scrolledpanel import ScrolledPanel
 
+frozen = 'not'
+if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    # we are running in a bundle
+    frozen = 'ever so'
+    bundle_dir = sys._MEIPASS
+else:
+    # we are running in a normal Python environment
+    bundle_dir = os.path.dirname(os.path.abspath(__file__))
+print( 'we are',frozen,'frozen')
+print( 'bundle dir is', bundle_dir )
+print( 'sys.argv[0] is', sys.argv[0] )
+print( 'sys.executable is', sys.executable )
+print( 'os.getcwd is', os.getcwd() )
+
 # 资源文件目录访问
 def source_path(relative_path):
     # 是否Bundle Resource
-    if getattr(sys, 'frozen', False):
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         base_path = sys._MEIPASS
     else:
         base_path = os.path.abspath(".")
